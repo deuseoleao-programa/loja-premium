@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { ShoppingCart } from 'lucide-react'
-import { useCartStore } from '@/store/cart'
+import { useCartStore } from '../store/cart'
 
 export default function CartButton() {
   const totalItems = useCartStore((state) => state.totalItems())

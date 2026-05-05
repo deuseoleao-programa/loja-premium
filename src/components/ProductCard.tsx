@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { ShoppingCart, Check } from 'lucide-react'
-import { useCartStore } from '@/store/cart'
+import { useCartStore } from '../store/cart'
 
 interface ProductProps {
   id: string
