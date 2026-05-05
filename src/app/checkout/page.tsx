@@ -1,11 +1,79 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import { Lock, ShieldCheck, Truck, CreditCard, ArrowLeft } from 'lucide-react'
 import { useCartStore } from '../../store/cart'
 
+function onlyNumbers(value: string) {
+  return value.replace(/\D/g, '')
+}
+
+function formatCPF(value: string) {
+  const numbers = onlyNumbers(value).slice(0, 11)
+
+  return numbers
+    .replace(/^(\d{3})(\d)/, '$1.$2')
+    .replace(/^(\d{3})\.(\d{3})(\d)/, '$1.$2.$3')
+    .replace(/\.(\d{3})(\d)/, '.$1-$2')
+}
+
+function formatCEP(value: string) {
+  const numbers = onlyNumbers(value).slice(0, 8)
+
+  return numbers.replace(/^(\d{5})(\d)/, '$1-$2')
+}
+
+function formatPhone(value: string) {
+  const numbers = onlyNumbers(value).slice(0, 11)
+
+  return numbers
+    .replace(/^(\d{2})(\d)/, '($1) $2')
+    .replace(/(\d{5})(\d)/, '$1-$2')
+}
+
 export default function CheckoutPage() {
   const { cart, totalPrice } = useCartStore()
+
+  const [fullName, setFullName] = useState('')
+  const [email, setEmail] = useState('')
+  const [cpf, setCpf] = useState('')
+  const [phone, setPhone] = useState('')
+  const [cep, setCep] = useState('')
+  const [address, setAddress] = useState('')
+  const [neighborhood, setNeighborhood] = useState('')
+  const [city, setCity] = useState('')
+  const [stateUf, setStateUf] = useState('')
+  const [number, setNumber] = useState('')
+  const [loadingCep, setLoadingCep] = useState(false)
+
+  async function handleCepChange(value: string) {
+    const formattedCep = formatCEP(value)
+    setCep(formattedCep)
+
+    const cleanCep = onlyNumbers(formattedCep)
+
+    if (cleanCep.length === 8) {
+      try {
+        setLoadingCep(true)
+
+        const response = await fetch(
+          `https://viacep.com.br/ws/${cleanCep}/json/`
+        )
+
+        const data = await response.json()
+
+        if (!data.erro) {
+          setAddress(data.logradouro || '')
+          setNeighborhood(data.bairro || '')
+          setCity(data.localidade || '')
+          setStateUf(data.uf || '')
+        }
+      } finally {
+        setLoadingCep(false)
+      }
+    }
+  }
 
   async function handleCheckout() {
     const response = await fetch('/api/checkout', {
@@ -13,7 +81,22 @@ export default function CheckoutPage() {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ cart }),
+      body: JSON.stringify({
+        cart,
+        customer: {
+          fullName,
+          email,
+          cpf,
+          phone,
+          cep,
+          address,
+          number,
+          neighborhood,
+          city,
+          state: stateUf,
+          country: 'Brazil',
+        },
+      }),
     })
 
     const data = await response.json()
@@ -45,53 +128,98 @@ export default function CheckoutPage() {
             </h1>
 
             <p className="text-zinc-500 text-lg mb-10">
-              Fast delivery, secure payment, and premium support.
+              Fill in your details. Your payment is processed securely by Stripe.
             </p>
 
             <div className="grid gap-5">
               <input
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
                 type="text"
                 placeholder="Full name"
                 className="border border-zinc-300 rounded-2xl p-5 text-lg focus:outline-none focus:border-green-400"
               />
 
               <input
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 type="email"
                 placeholder="Email address"
                 className="border border-zinc-300 rounded-2xl p-5 text-lg focus:outline-none focus:border-green-400"
               />
 
+              <div className="grid md:grid-cols-2 gap-5">
+                <input
+                  value={cpf}
+                  onChange={(e) => setCpf(formatCPF(e.target.value))}
+                  type="text"
+                  placeholder="CPF 000.000.000-00"
+                  className="border border-zinc-300 rounded-2xl p-5 text-lg focus:outline-none focus:border-green-400"
+                />
+
+                <input
+                  value={phone}
+                  onChange={(e) => setPhone(formatPhone(e.target.value))}
+                  type="text"
+                  placeholder="Phone (00) 00000-0000"
+                  className="border border-zinc-300 rounded-2xl p-5 text-lg focus:outline-none focus:border-green-400"
+                />
+              </div>
+
               <input
+                value={cep}
+                onChange={(e) => handleCepChange(e.target.value)}
                 type="text"
-                placeholder="Shipping address"
+                placeholder="ZIP / CEP 00000-000"
+                className="border border-zinc-300 rounded-2xl p-5 text-lg focus:outline-none focus:border-green-400"
+              />
+
+              {loadingCep && (
+                <p className="text-green-600 font-bold">
+                  Searching address...
+                </p>
+              )}
+
+              <input
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                type="text"
+                placeholder="Address"
                 className="border border-zinc-300 rounded-2xl p-5 text-lg focus:outline-none focus:border-green-400"
               />
 
               <div className="grid md:grid-cols-2 gap-5">
                 <input
+                  value={number}
+                  onChange={(e) => setNumber(e.target.value)}
                   type="text"
-                  placeholder="City"
+                  placeholder="Number"
                   className="border border-zinc-300 rounded-2xl p-5 text-lg focus:outline-none focus:border-green-400"
                 />
 
                 <input
+                  value={neighborhood}
+                  onChange={(e) => setNeighborhood(e.target.value)}
                   type="text"
-                  placeholder="State"
+                  placeholder="Neighborhood"
                   className="border border-zinc-300 rounded-2xl p-5 text-lg focus:outline-none focus:border-green-400"
                 />
               </div>
 
               <div className="grid md:grid-cols-2 gap-5">
                 <input
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
                   type="text"
-                  placeholder="ZIP code"
+                  placeholder="City"
                   className="border border-zinc-300 rounded-2xl p-5 text-lg focus:outline-none focus:border-green-400"
                 />
 
                 <input
+                  value={stateUf}
+                  onChange={(e) => setStateUf(e.target.value)}
                   type="text"
-                  placeholder="Country"
-                  defaultValue="United States"
+                  placeholder="State"
                   className="border border-zinc-300 rounded-2xl p-5 text-lg focus:outline-none focus:border-green-400"
                 />
               </div>
