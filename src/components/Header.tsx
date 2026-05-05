@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import CartButton from './CartButton'
+import SearchBar from './SearchBar'
 
 export default function Header() {
   return (
@@ -15,7 +16,7 @@ export default function Header() {
           </Link>
 
           <Link href="/#products" className="hover:text-green-400 transition">
-            Produtos
+            Products
           </Link>
 
           <Link href="/admin" className="hover:text-green-400 transition">
@@ -23,7 +24,10 @@ export default function Header() {
           </Link>
         </nav>
 
-        <CartButton />
+        <div className="flex items-center gap-4">
+          <SearchBar />
+          <CartButton />
+        </div>
       </div>
     </header>
   )
