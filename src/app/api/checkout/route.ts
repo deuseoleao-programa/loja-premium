@@ -31,8 +31,8 @@ export async function POST(request: Request) {
         quantity: item.quantity,
       })),
 
-      success_url: 'http://localhost:3000/success',
-      cancel_url: 'http://localhost:3000/cart',
+      success_url: 'https://loja-premium-8ihm14jg6-deuseoleao-2239s-projects.vercel.app/success',
+cancel_url: 'https://loja-premium-8ihm14jg6-deuseoleao-2239s-projects.vercel.app/cart',
     })
 
     const total = cart.reduce(
