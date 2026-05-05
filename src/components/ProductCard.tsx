@@ -1,8 +1,9 @@
 'use client'
 
+import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { useCartStore } from '../store/cart'
-import { useRouter } from 'next/navigation'
+import { ShoppingCart, Check } from 'lucide-react'
+import { useCartStore } from '@/store/cart'
 
 interface ProductProps {
   id: string
@@ -17,15 +18,11 @@ export default function ProductCard({
   image,
   price,
 }: ProductProps) {
+  const [added, setAdded] = useState(false)
 
-  const router = useRouter()
-
-  const addToCart = useCartStore(
-    (state) => state.addToCart
-  )
+  const addToCart = useCartStore((state) => state.addToCart)
 
   function handleAddToCart() {
-
     addToCart({
       id,
       title,
@@ -34,56 +31,78 @@ export default function ProductCard({
       quantity: 1,
     })
 
-    router.push('/cart')
+    setAdded(true)
+
+    setTimeout(() => {
+      setAdded(false)
+    }, 1800)
   }
 
   return (
     <motion.div
-      whileHover={{ y: -10 }}
-      className="bg-white rounded-3xl overflow-hidden shadow-2xl"
+      whileHover={{ y: -8 }}
+      className="bg-white rounded-3xl overflow-hidden shadow-2xl border border-zinc-100"
     >
-
       <div className="relative overflow-hidden">
-
         <img
           src={image}
           alt={title}
           className="w-full h-80 object-cover hover:scale-110 transition duration-500"
         />
 
-        <div className="absolute top-4 left-4 bg-green-400 text-black px-4 py-2 rounded-full font-bold text-sm">
-          MAIS VENDIDO
+        <div className="absolute top-4 left-4 bg-green-400 text-black px-4 py-2 rounded-full font-black text-sm">
+          BEST SELLER
         </div>
 
+        <div className="absolute top-4 right-4 bg-black text-white px-4 py-2 rounded-full font-black text-sm">
+          USA
+        </div>
       </div>
 
       <div className="p-6">
-
-        <h2 className="text-2xl font-bold mb-3">
+        <h2 className="text-2xl font-black mb-3">
           {title}
         </h2>
 
         <div className="flex items-center gap-2 mb-4">
-          ⭐⭐⭐⭐⭐
+          <span>⭐⭐⭐⭐⭐</span>
 
           <span className="text-zinc-500 text-sm">
-            (2.341 avaliações)
+            (2,341 reviews)
           </span>
         </div>
 
-        <p className="text-4xl font-black text-green-600 mb-6">
-          R$ {price}
-        </p>
+        <div className="mb-6">
+          <p className="text-zinc-400 line-through text-lg">
+            $ {(price * 1.35).toFixed(2)}
+          </p>
+
+          <p className="text-4xl font-black text-green-600">
+            $ {price.toFixed(2)}
+          </p>
+        </div>
 
         <button
           onClick={handleAddToCart}
-          className="w-full bg-black text-white py-4 rounded-2xl font-bold hover:bg-zinc-800 transition"
+          className={`w-full py-4 rounded-2xl font-black text-lg flex items-center justify-center gap-3 transition ${
+            added
+              ? 'bg-green-400 text-black'
+              : 'bg-black text-white hover:bg-zinc-800'
+          }`}
         >
-          Comprar Agora
+          {added ? (
+            <>
+              <Check size={22} />
+              Added to cart
+            </>
+          ) : (
+            <>
+              <ShoppingCart size={22} />
+              Add to Cart
+            </>
+          )}
         </button>
-
       </div>
-
     </motion.div>
   )
 }
