@@ -1,27 +1,29 @@
-'use client'
-
-import { ShoppingCart, Search } from 'lucide-react'
+import Link from 'next/link'
+import CartButton from './CartButton'
 
 export default function Header() {
   return (
-    <header className="fixed top-0 left-0 w-full z-50 backdrop-blur-md bg-black/70 border-b border-white/10">
+    <header className="fixed top-0 left-0 w-full z-50 bg-black/80 backdrop-blur-xl border-b border-white/10">
       <div className="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
+        <Link href="/" className="text-2xl font-black text-white">
+          VETRIX<span className="text-green-400">STORE</span>
+        </Link>
 
-        <h1 className="text-3xl font-black text-white tracking-wide">
-          VELTRIX
-        </h1>
+        <nav className="hidden md:flex items-center gap-8 text-white font-bold">
+          <Link href="/" className="hover:text-green-400 transition">
+            Home
+          </Link>
 
-        <nav className="hidden md:flex gap-10 text-white font-medium">
-          <a href="#">Home</a>
-          <a href="#">Produtos</a>
-          <a href="#">Ofertas</a>
-          <a href="#">Contato</a>
+          <Link href="/#products" className="hover:text-green-400 transition">
+            Produtos
+          </Link>
+
+          <Link href="/admin" className="hover:text-green-400 transition">
+            Admin
+          </Link>
         </nav>
 
-        <div className="flex items-center gap-5 text-white">
-          <Search className="cursor-pointer" />
-          <ShoppingCart className="cursor-pointer" />
-        </div>
+        <CartButton />
       </div>
     </header>
   )
