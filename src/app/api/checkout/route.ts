@@ -36,7 +36,7 @@ export async function POST(request: Request) {
 
       line_items: cart.map((item: any) => ({
         price_data: {
-          currency: 'brl',
+          currency: 'usd',
           product_data: {
             name: item.title,
             images: [item.image],
