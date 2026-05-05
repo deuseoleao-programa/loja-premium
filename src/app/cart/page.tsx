@@ -17,6 +17,7 @@ export default function CartPage() {
   return (
     <main className="min-h-screen bg-zinc-100 py-24 px-6">
       <div className="max-w-7xl mx-auto">
+
         <Link
           href="/"
           className="inline-flex items-center gap-2 text-zinc-600 font-bold mb-8 hover:text-black"
@@ -50,12 +51,15 @@ export default function CartPage() {
           </div>
         ) : (
           <div className="grid lg:grid-cols-3 gap-10">
+
             <section className="lg:col-span-2 flex flex-col gap-6">
+
               {cart.map((item) => (
                 <div
                   key={item.id}
                   className="bg-white rounded-3xl shadow-xl p-6 flex flex-col md:flex-row gap-6 items-center"
                 >
+
                   <img
                     src={item.image}
                     alt={item.title}
@@ -63,6 +67,7 @@ export default function CartPage() {
                   />
 
                   <div className="flex-1 w-full">
+
                     <h2 className="text-2xl font-black mb-2">
                       {item.title}
                     </h2>
@@ -72,8 +77,12 @@ export default function CartPage() {
                     </p>
 
                     <div className="flex items-center gap-4">
+
+                      {/* BOTÃO - */}
                       <button
                         onClick={() => decreaseQuantity(item.id)}
+                        aria-label={`Decrease quantity of ${item.title}`}
+                        title={`Decrease quantity of ${item.title}`}
                         className="w-11 h-11 rounded-full bg-zinc-200 flex items-center justify-center hover:bg-zinc-300 transition"
                       >
                         <Minus size={18} />
@@ -83,15 +92,20 @@ export default function CartPage() {
                         {item.quantity}
                       </span>
 
+                      {/* BOTÃO + */}
                       <button
                         onClick={() => increaseQuantity(item.id)}
+                        aria-label={`Increase quantity of ${item.title}`}
+                        title={`Increase quantity of ${item.title}`}
                         className="w-11 h-11 rounded-full bg-zinc-200 flex items-center justify-center hover:bg-zinc-300 transition"
                       >
                         <Plus size={18} />
                       </button>
+
                     </div>
                   </div>
 
+                  {/* BOTÃO REMOVER */}
                   <button
                     onClick={() => removeFromCart(item.id)}
                     className="bg-red-500 text-white px-5 py-3 rounded-2xl font-black flex items-center gap-2 hover:bg-red-600 transition"
@@ -99,11 +113,14 @@ export default function CartPage() {
                     <Trash2 size={18} />
                     Remove
                   </button>
+
                 </div>
               ))}
+
             </section>
 
             <aside className="bg-white rounded-3xl shadow-2xl p-8 h-fit sticky top-28">
+
               <h2 className="text-3xl font-black mb-8">
                 Order Summary
               </h2>
@@ -144,9 +161,12 @@ export default function CartPage() {
               <p className="text-zinc-400 text-sm text-center mt-6">
                 Secure payment powered by Stripe.
               </p>
+
             </aside>
+
           </div>
         )}
+
       </div>
     </main>
   )
